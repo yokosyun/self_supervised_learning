@@ -1,9 +1,8 @@
 import pytorch_lightning as pl
 import torch
-import torchvision
 
 from lightly.data import LightlyDataset
-from lightly.transforms import MoCoV2Transform, utils
+from lightly.transforms import MoCoV2Transform
 from pytorch_lightning.loggers import TensorBoardLogger
 from models.contrastive.moco import MocoModel
 
@@ -27,11 +26,10 @@ def main():
         gaussian_blur=0.0,
     )
 
-    # We use the moco augmentations for training moco
-    dataset_train_moco = LightlyDataset(input_dir=path_to_train, transform=transform)
+    dataset = LightlyDataset(input_dir=path_to_train, transform=transform)
 
-    dataloader_train_moco = torch.utils.data.DataLoader(
-        dataset_train_moco,
+    dataloader = torch.utils.data.DataLoader(
+        dataset,
         batch_size=batch_size,
         shuffle=True,
         drop_last=True,
@@ -44,7 +42,7 @@ def main():
     trainer = pl.Trainer(
         max_epochs=max_epochs, devices=1, accelerator="gpu", logger=logger
     )
-    trainer.fit(model, dataloader_train_moco)
+    trainer.fit(model, dataloader)
 
 
 if __name__ == "__main__":
