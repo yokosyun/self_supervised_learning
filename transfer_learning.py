@@ -1,3 +1,4 @@
+import argparse
 import torchvision
 from lightly.transforms import utils
 from lightly.data import LightlyDataset
@@ -5,24 +6,26 @@ import torch
 import pytorch_lightning as pl
 from pytorch_lightning.loggers import TensorBoardLogger
 from models.heads.classifier import Classifier
-from lightly.models import ResNetGenerator
 import torch.nn as nn
 
-
-# Custome Params
-# ckpt_path = "tb_logs/contrastive/swav/checkpoints/epoch=6-step=43750.ckpt"
-ckpt_path = "tb_logs/contrastive/moco_20240606/checkpoints/epoch=0-step=6250.ckpt"
 
 # Shared Params
 num_workers = 8
 batch_size = 512
 seed = 1
 max_epochs = 100
-path_to_train = "/home/yoko/data/cifar10/train/"
-path_to_test = "/home/yoko/data/cifar10/test/"
+path_to_train = "./data/cifar10/train/"
+path_to_test = "./data/cifar10/test/"
 load_ckpt = True
 freeze_backbone = False
-model_type = "swav"  # [swav, moco]
+precision = 16
+
+
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--model_name", type=str)
+    parser.add_argument("--ckpt_path", type=str)
+    return parser.parse_args()
 
 
 def startswith_remove_keys(target_key, remove_keys):
@@ -48,6 +51,8 @@ def replace_keys(
 
 
 def main():
+    args = parse_args()
+
     pl.seed_everything(seed)
 
     train_classifier_transforms = torchvision.transforms.Compose(
@@ -100,10 +105,10 @@ def main():
     backbone = nn.Sequential(*list(resnet.children())[:-1])
 
     if load_ckpt:
-        ckpt = torch.load(ckpt_path)
-        if model_type == "swav":
+        ckpt = torch.load(args.ckpt_path)
+        if args.model_name == "swav":
             remove_keys = ["backbone_momentum", "projection_head", "prototypes"]
-        elif model_type == "moco":
+        elif args.model_name == "moco":
             remove_keys = []
         else:
             raise Exception("Invalid model type")
@@ -113,7 +118,11 @@ def main():
     backbone.eval()
     classifier = Classifier(backbone, max_epochs, freeze_backbone=freeze_backbone)
     trainer = pl.Trainer(
-        max_epochs=max_epochs, devices=1, accelerator="gpu", logger=logger
+        max_epochs=max_epochs,
+        devices=1,
+        accelerator="gpu",
+        logger=logger,
+        precision=precision,
     )
     trainer.fit(classifier, dataloader_train, dataloader_test)
 
