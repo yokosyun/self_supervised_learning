@@ -10,7 +10,8 @@ import torch.nn as nn
 
 
 # Custome Params
-ckpt_path = "tb_logs/contrastive/moco_20240604/checkpoints/epoch=99-step=9700-v1.ckpt"
+# ckpt_path = "tb_logs/contrastive/swav/checkpoints/epoch=6-step=43750.ckpt"
+ckpt_path = "tb_logs/contrastive/moco_20240606/checkpoints/epoch=0-step=6250.ckpt"
 
 # Shared Params
 num_workers = 8
@@ -19,20 +20,29 @@ seed = 1
 max_epochs = 100
 path_to_train = "/home/yoko/data/cifar10/train/"
 path_to_test = "/home/yoko/data/cifar10/test/"
-
 load_ckpt = True
 freeze_backbone = False
+model_type = "swav"  # [swav, moco]
+
+
+def startswith_remove_keys(target_key, remove_keys):
+    for remove_key in remove_keys:
+        if target_key.startswith(remove_key):
+            return True
+    return False
 
 
 def replace_keys(
-    in_dict, source="backbone.", target="", remove_keys=["fc.weight", "fc.bias"]
+    in_dict,
+    source="backbone.",
+    target="",
+    remove_keys=["backbone_momentum", "projection_head", "prototypes"],
 ):
     out_dict = {}
     for key, val in in_dict.items():
-        if key in remove_keys:
-            continue
-        out_key = key.replace(source, target)
-        out_dict[out_key] = val
+        if not startswith_remove_keys(key, remove_keys):
+            out_key = key.replace(source, target)
+            out_dict[out_key] = val
 
     return out_dict
 
@@ -63,14 +73,14 @@ def main():
         ]
     )
 
-    dataset_train_classifier = LightlyDataset(
+    dataset_train = LightlyDataset(
         input_dir=path_to_train, transform=train_classifier_transforms
     )
 
     dataset_test = LightlyDataset(input_dir=path_to_test, transform=test_transforms)
 
-    dataloader_train_classifier = torch.utils.data.DataLoader(
-        dataset_train_classifier,
+    dataloader_train = torch.utils.data.DataLoader(
+        dataset_train,
         batch_size=batch_size,
         shuffle=True,
         drop_last=True,
@@ -86,15 +96,18 @@ def main():
     )
     logger = TensorBoardLogger("tb_logs", name="transfer")
 
-    resnet = ResNetGenerator("resnet-18", 1, num_splits=8)
-    backbone = nn.Sequential(
-        *list(resnet.children())[:-1],
-        nn.AdaptiveAvgPool2d(1),
-    )
+    resnet = torchvision.models.resnet18()
+    backbone = nn.Sequential(*list(resnet.children())[:-1])
 
     if load_ckpt:
         ckpt = torch.load(ckpt_path)
-        state_dict = replace_keys(ckpt["state_dict"])
+        if model_type == "swav":
+            remove_keys = ["backbone_momentum", "projection_head", "prototypes"]
+        elif model_type == "moco":
+            remove_keys = []
+        else:
+            raise Exception("Invalid model type")
+        state_dict = replace_keys(ckpt["state_dict"], remove_keys=remove_keys)
         backbone.load_state_dict(state_dict)
 
     backbone.eval()
@@ -102,7 +115,7 @@ def main():
     trainer = pl.Trainer(
         max_epochs=max_epochs, devices=1, accelerator="gpu", logger=logger
     )
-    trainer.fit(classifier, dataloader_train_classifier, dataloader_test)
+    trainer.fit(classifier, dataloader_train, dataloader_test)
 
 
 if __name__ == "__main__":
