@@ -2,3 +2,4 @@ data/
 .vscode/
 tb_logs/
 __pycache__
+usr/

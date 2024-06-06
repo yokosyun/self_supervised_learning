@@ -17,16 +17,23 @@ pip install pip --upgrade
 pip3 install -r requirements.txt
 ```
 
-# Self-Supervised Learning
+# Contrastive Learning
+
 ```
-python3 contrastive_learning.py
+python3 contrastive_learning.py --model_name swav
 ```
 
-# Fine-Tuning
-modify <ckpt_path>
+visualize log
 ```
-python3 transfer_learning.py
+tensorboard --logdir tb_logs/contrastive/
 ```
 
-# TODO!
-check difference of ckpt v1 and normal one
+
+# Transfer Learning
+```
+python3 transfer_learning.py --model_name swav --ckpt_path <path-to.ckpt>
+```
+visualize log
+```
+tensorboard --logdir tb_logs/transfer/
+```
