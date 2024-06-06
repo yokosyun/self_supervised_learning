@@ -18,11 +18,10 @@ pip3 install -r requirements.txt
 ```
 
 # Contrastive Learning
-
+train model
 ```
 python3 contrastive_learning.py --model_name swav
 ```
-
 visualize log
 ```
 tensorboard --logdir tb_logs/contrastive/
@@ -30,6 +29,7 @@ tensorboard --logdir tb_logs/contrastive/
 
 
 # Transfer Learning
+train model
 ```
 python3 transfer_learning.py --model_name swav --ckpt_path <path-to.ckpt>
 ```
@@ -37,3 +37,7 @@ visualize log
 ```
 tensorboard --logdir tb_logs/transfer/
 ```
+
+# Reference
+- [lightly](https://github.com/lightly-ai/lightly/tree/master)
+- [contrastive learning papers](https://medium.com/@shunsukeyokokawa/self-supervised-learning-summary-2a0adf37954a)
