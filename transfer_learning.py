@@ -39,7 +39,7 @@ def replace_keys(
     in_dict,
     source="backbone.",
     target="",
-    remove_keys=["backbone_momentum", "projection_head", "prototypes"],
+    remove_keys=[],
 ):
     out_dict = {}
     for key, val in in_dict.items():
@@ -107,9 +107,13 @@ def main():
     if load_ckpt:
         ckpt = torch.load(args.ckpt_path)
         if args.model_name == "swav":
-            remove_keys = ["backbone_momentum", "projection_head", "prototypes"]
+            remove_keys = ["projection_head", "prototypes"]
         elif args.model_name == "moco":
-            remove_keys = []
+            remove_keys = [
+                "projection_head",
+                "backbone_momentum",
+                "projection_head_momentum",
+            ]
         else:
             raise Exception("Invalid model type")
         state_dict = replace_keys(ckpt["state_dict"], remove_keys=remove_keys)
