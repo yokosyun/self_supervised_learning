@@ -16,7 +16,6 @@ seed = 1
 max_epochs = 100
 path_to_train = "./data/cifar10/train/"
 path_to_test = "./data/cifar10/test/"
-load_ckpt = True
 freeze_backbone = False
 precision = 16
 
@@ -24,7 +23,7 @@ precision = 16
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--model_name", type=str)
-    parser.add_argument("--ckpt_path", type=str)
+    parser.add_argument("--ckpt_path", default=None, type=str)
     return parser.parse_args()
 
 
@@ -104,7 +103,7 @@ def main():
     resnet = torchvision.models.resnet18()
     backbone = nn.Sequential(*list(resnet.children())[:-1])
 
-    if load_ckpt:
+    if args.ckpt_path:
         ckpt = torch.load(args.ckpt_path)
         if args.model_name == "swav":
             remove_keys = ["projection_head", "prototypes"]
