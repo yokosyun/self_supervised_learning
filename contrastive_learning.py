@@ -1,3 +1,4 @@
+import datetime
 import argparse
 import torch
 from torch import nn
@@ -55,7 +56,11 @@ def main():
         num_workers=num_workers,
     )
 
-    logger = TensorBoardLogger("tb_logs", name="contrastive")
+    logger = TensorBoardLogger(
+        save_dir="tb_logs/contrastive",
+        name=args.model_name,
+        version=datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S"),
+    )
 
     trainer = pl.Trainer(
         max_epochs=max_epochs,
