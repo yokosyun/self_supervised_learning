@@ -38,13 +38,13 @@ def main():
 
     if args.model_name == "moco":
         model = MocoModel(backbone, memory_bank_size=4096, max_epochs=max_epochs)
-        transform = MoCoV2Transform(
-            input_size=32,
-            gaussian_blur=0.0,
-        )
     elif args.model_name == "swav":
         model = SwaV(backbone)
-        transform = SwaVTransform()
+
+    transform = MoCoV2Transform(
+        input_size=32,
+        gaussian_blur=0.0,
+    )
 
     dataset = LightlyDataset(input_dir=path_to_train, transform=transform)
 
