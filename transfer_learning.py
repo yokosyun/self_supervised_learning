@@ -1,3 +1,4 @@
+import datetime
 import argparse
 import torchvision
 from lightly.transforms import utils
@@ -98,7 +99,11 @@ def main():
         drop_last=False,
         num_workers=num_workers,
     )
-    logger = TensorBoardLogger("tb_logs", name="transfer")
+    logger = TensorBoardLogger(
+        save_dir="tb_logs/transfer",
+        name=args.model_name,
+        version=datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S"),
+    )
 
     resnet = torchvision.models.resnet18()
     backbone = nn.Sequential(*list(resnet.children())[:-1])
