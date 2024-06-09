@@ -24,7 +24,9 @@ precision = 16
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--model_name", help="[keming,imagenet, simclr,moco,swav,xxx]", type=str
+        "--model_name",
+        type=str,
+        help="[imagenet, simclr, moco, swav, byol]",
     )
     parser.add_argument("--ckpt_path", default=None, type=str)
     return parser.parse_args()
@@ -107,16 +109,7 @@ def main():
         version=datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S"),
     )
 
-    if args.model_name == "imagenet":
-        weights = "IMAGENET1K_V1"
-        assert args.ckpt_path == None, "ckpt_path should be None"
-    elif args.model_name == "keming":
-        weights = None
-        assert args.ckpt_path == None, "ckpt_path should be None"
-    else:
-        weights = None
-
-    resnet = torchvision.models.resnet18(weights=weights)
+    resnet = torchvision.models.resnet18(weights="IMAGENET1K_V1")
     backbone = nn.Sequential(*list(resnet.children())[:-1])
 
     if args.ckpt_path:
