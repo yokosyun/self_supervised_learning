@@ -7,7 +7,6 @@ import pytorch_lightning as pl
 from pytorch_lightning.loggers import TensorBoardLogger
 from lightly.data import LightlyDataset
 from lightly.transforms import MoCoV2Transform
-from lightly.transforms.swav_transform import SwaVTransform
 
 from models.contrastive.moco import MocoModel
 from models.contrastive.swav import SwaV
@@ -24,7 +23,11 @@ precision = 16
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--model_name", type=str)
+    parser.add_argument(
+        "--model_name",
+        type=str,
+        help="[simclr, moco, swav, byol]",
+    )
     return parser.parse_args()
 
 
@@ -33,7 +36,7 @@ def main():
 
     pl.seed_everything(seed)
 
-    resnet = torchvision.models.resnet18()
+    resnet = torchvision.models.resnet18(weights="IMAGENET1K_V1")
     backbone = nn.Sequential(*list(resnet.children())[:-1])
 
     if args.model_name == "moco":
