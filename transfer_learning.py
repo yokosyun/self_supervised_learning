@@ -135,6 +135,7 @@ def main():
         accelerator="gpu",
         logger=logger,
         precision=precision,
+        deterministic=True,
     )
     trainer.fit(classifier, dataloader_train, dataloader_test)
 
