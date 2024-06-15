@@ -13,7 +13,7 @@ from models.contrastive.swav import SwaV
 
 
 # fixed params
-path_to_train = "./data/cifar10/train/"
+train_root_dir = "./data/cifar10/train/"
 batch_size = 128
 num_workers = 8
 seed = 1
@@ -49,7 +49,7 @@ def main():
         gaussian_blur=0.0,
     )
 
-    dataset = LightlyDataset(input_dir=path_to_train, transform=transform)
+    dataset = LightlyDataset(input_dir=train_root_dir, transform=transform)
 
     dataloader = torch.utils.data.DataLoader(
         dataset,
