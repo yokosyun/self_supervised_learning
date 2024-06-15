@@ -12,7 +12,7 @@ import torch.nn as nn
 
 # Shared Params
 num_workers = 8
-batch_size = 512
+batch_size = 128
 seed = 1
 max_epochs = 100
 path_to_train = "./data/cifar10/train/"
@@ -127,8 +127,8 @@ def main():
         state_dict = replace_keys(ckpt["state_dict"], remove_keys=remove_keys)
         backbone.load_state_dict(state_dict)
 
-    backbone.eval()
     classifier = Classifier(backbone, max_epochs, freeze_backbone=freeze_backbone)
+
     trainer = pl.Trainer(
         max_epochs=max_epochs,
         devices=1,
