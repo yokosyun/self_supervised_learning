@@ -15,8 +15,8 @@ num_workers = 8
 batch_size = 128
 seed = 1
 max_epochs = 100
-path_to_train = "./data/cifar10/train/"
-path_to_test = "./data/cifar10/test/"
+train_root_dir = "./data/cifar10/train/"
+test_root_dir = "./data/cifar10/test/"
 freeze_backbone = False
 precision = 16
 
@@ -59,7 +59,7 @@ def main():
 
     pl.seed_everything(seed)
 
-    train_classifier_transforms = torchvision.transforms.Compose(
+    train_transforms = torchvision.transforms.Compose(
         [
             torchvision.transforms.RandomCrop(32, padding=4),
             torchvision.transforms.RandomHorizontalFlip(),
@@ -82,11 +82,9 @@ def main():
         ]
     )
 
-    dataset_train = LightlyDataset(
-        input_dir=path_to_train, transform=train_classifier_transforms
-    )
+    dataset_train = LightlyDataset(input_dir=train_root_dir, transform=train_transforms)
 
-    dataset_test = LightlyDataset(input_dir=path_to_test, transform=test_transforms)
+    dataset_test = LightlyDataset(input_dir=test_root_dir, transform=test_transforms)
 
     dataloader_train = torch.utils.data.DataLoader(
         dataset_train,
