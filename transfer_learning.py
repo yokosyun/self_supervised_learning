@@ -121,6 +121,13 @@ def main():
                 "backbone_momentum",
                 "projection_head_momentum",
             ]
+        elif args.model_name == "byol":
+            remove_keys = [
+                "projection_head",
+                "prediction_head",
+                "backbone_momentum",
+                "projection_head_momentum",
+            ]
         else:
             raise Exception("Invalid model type")
         state_dict = replace_keys(ckpt["state_dict"], remove_keys=remove_keys)
