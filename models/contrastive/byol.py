@@ -1,8 +1,6 @@
 import copy
 import pytorch_lightning as pl
 import torch
-import torchvision
-from torch import nn
 
 from lightly.loss import NegativeCosineSimilarity
 from lightly.models.modules import BYOLPredictionHead, BYOLProjectionHead
@@ -13,8 +11,6 @@ from lightly.utils.scheduler import cosine_schedule
 class BYOL(pl.LightningModule):
     def __init__(self, backbone):
         super().__init__()
-        # resnet = torchvision.models.resnet18()
-        # self.backbone = nn.Sequential(*list(resnet.children())[:-1])
         self.backbone = backbone
         self.projection_head = BYOLProjectionHead(512, 1024, 256)
         self.prediction_head = BYOLPredictionHead(256, 1024, 256)
