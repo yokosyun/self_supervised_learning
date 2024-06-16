@@ -6,7 +6,7 @@ from lightly.models.modules import MoCoProjectionHead
 import copy
 
 
-class MocoModel(pl.LightningModule):
+class Moco(pl.LightningModule):
     def __init__(self, backbone, feature_dim=512, projection_dim=128, temperature=0.07):
         super().__init__()
         self.backbone = backbone

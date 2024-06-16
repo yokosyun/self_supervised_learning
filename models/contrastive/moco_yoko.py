@@ -11,7 +11,7 @@ from lightly.models.utils import (
 )
 
 
-class MocoModel(pl.LightningModule):
+class MocoYoko(pl.LightningModule):
     def __init__(self, backbone, memory_bank_size: int, max_epochs: int):
         super().__init__()
         self.max_epochs = max_epochs
