@@ -39,8 +39,10 @@ def main():
     resnet = torchvision.models.resnet18(weights="IMAGENET1K_V1")
     backbone = nn.Sequential(*list(resnet.children())[:-1])
 
-    if args.model_name == "moco":
+    if args.model_name == "moco_yoko":
         model = MocoModel(backbone, memory_bank_size=4096, max_epochs=max_epochs)
+    elif args.model_name == "moco":
+        model = MocoModel(backbone)
     elif args.model_name == "swav":
         model = SwaV(backbone)
 
