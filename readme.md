@@ -41,3 +41,4 @@ tensorboard --logdir tb_logs/transfer/
 # Reference
 - [lightly](https://github.com/lightly-ai/lightly/tree/master)
 - [contrastive learning papers](https://medium.com/@shunsukeyokokawa/self-supervised-learning-summary-2a0adf37954a)
+- [pytorch-cifar](https://github.com/kuangliu/pytorch-cifar)

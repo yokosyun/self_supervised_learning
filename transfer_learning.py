@@ -13,13 +13,17 @@ import torch.nn as nn
 
 # Shared Params
 num_workers = 8
-batch_size = 128
+train_batch_size = 128
+test_batch_size = 100
 seed = 1
-max_epochs = 100
+max_epochs = 200
 train_root_dir = "./data/cifar10/train/"
 test_root_dir = "./data/cifar10/test/"
 freeze_backbone = False
-precision = 16
+precision = 32
+
+CIFAR_MEAN = (0.4914, 0.4822, 0.4465)
+CIFAR_STD = (0.2023, 0.1994, 0.2010)
 
 
 def parse_args():
@@ -66,8 +70,8 @@ def main():
             torchvision.transforms.RandomHorizontalFlip(),
             torchvision.transforms.ToTensor(),
             torchvision.transforms.Normalize(
-                mean=utils.IMAGENET_NORMALIZE["mean"],
-                std=utils.IMAGENET_NORMALIZE["std"],
+                mean=CIFAR_MEAN,
+                std=CIFAR_STD,
             ),
         ]
     )
@@ -77,8 +81,8 @@ def main():
             torchvision.transforms.Resize((32, 32)),
             torchvision.transforms.ToTensor(),
             torchvision.transforms.Normalize(
-                mean=utils.IMAGENET_NORMALIZE["mean"],
-                std=utils.IMAGENET_NORMALIZE["std"],
+                mean=CIFAR_MEAN,
+                std=CIFAR_STD,
             ),
         ]
     )
@@ -89,7 +93,7 @@ def main():
 
     dataloader_train = torch.utils.data.DataLoader(
         dataset_train,
-        batch_size=batch_size,
+        batch_size=train_batch_size,
         shuffle=True,
         drop_last=True,
         num_workers=num_workers,
@@ -97,7 +101,7 @@ def main():
 
     dataloader_test = torch.utils.data.DataLoader(
         dataset_test,
-        batch_size=batch_size,
+        batch_size=test_batch_size,
         shuffle=False,
         drop_last=False,
         num_workers=num_workers,
@@ -115,12 +119,14 @@ def main():
         ckpt = torch.load(args.ckpt_path)
         if args.model_name == "swav":
             remove_keys = ["projection_head", "prototypes"]
-        elif args.model_name == "moco":
+        elif args.model_name == "moco_yoko":
             remove_keys = [
                 "projection_head",
                 "backbone_momentum",
                 "projection_head_momentum",
             ]
+        elif args.model_name == "moco":
+            remove_keys = []
         elif args.model_name == "byol":
             remove_keys = [
                 "projection_head",
