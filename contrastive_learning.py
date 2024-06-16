@@ -8,7 +8,8 @@ from pytorch_lightning.loggers import TensorBoardLogger
 from lightly.data import LightlyDataset
 from lightly.transforms import MoCoV2Transform
 
-from models.contrastive.moco import MocoModel
+from models.contrastive.moco_yoko import MocoYoko
+from models.contrastive.moco import Moco
 from models.contrastive.swav import SwaV
 from models.contrastive.byol import BYOL
 
@@ -41,9 +42,9 @@ def main():
     backbone = nn.Sequential(*list(resnet.children())[:-1])
 
     if args.model_name == "moco_yoko":
-        model = MocoModel(backbone, memory_bank_size=4096, max_epochs=max_epochs)
+        model = MocoYoko(backbone, memory_bank_size=4096, max_epochs=max_epochs)
     elif args.model_name == "moco":
-        model = MocoModel(backbone)
+        model = Moco(backbone)
     elif args.model_name == "swav":
         model = SwaV(backbone)
     elif args.model_name == "byol":
