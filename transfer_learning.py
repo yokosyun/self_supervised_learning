@@ -6,6 +6,7 @@ from lightly.data import LightlyDataset
 import torch
 import pytorch_lightning as pl
 from pytorch_lightning.loggers import TensorBoardLogger
+from pytorch_lightning.callbacks import LearningRateMonitor
 from models.heads.classifier import Classifier
 import torch.nn as nn
 
@@ -134,6 +135,7 @@ def main():
         logger=logger,
         precision=precision,
         deterministic=True,
+        callbacks=[LearningRateMonitor(logging_interval="step")],
     )
     trainer.fit(classifier, dataloader_train, dataloader_test)
 
