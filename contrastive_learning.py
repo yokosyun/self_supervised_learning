@@ -10,6 +10,7 @@ from lightly.transforms import MoCoV2Transform
 
 from models.contrastive.moco import MocoModel
 from models.contrastive.swav import SwaV
+from models.contrastive.byol import BYOL
 
 
 # fixed params
@@ -45,6 +46,8 @@ def main():
         model = MocoModel(backbone)
     elif args.model_name == "swav":
         model = SwaV(backbone)
+    elif args.model_name == "byol":
+        model = BYOL(backbone)
 
     transform = MoCoV2Transform(
         input_size=32,
