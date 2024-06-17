@@ -4,6 +4,7 @@ import torch
 from torch import nn
 import torchvision
 import pytorch_lightning as pl
+from pytorch_lightning.callbacks import ModelCheckpoint
 from pytorch_lightning.loggers import TensorBoardLogger
 from lightly.data import LightlyDataset
 from lightly.transforms import MoCoV2Transform
@@ -77,6 +78,7 @@ def main():
         accelerator="gpu",
         logger=logger,
         precision=precision,
+        callbacks=[ModelCheckpoint(save_top_k=-1)],
     )
     trainer.fit(model, dataloader)
 
