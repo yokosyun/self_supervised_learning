@@ -13,7 +13,7 @@ from models.contrastive.moco_yoko import MocoYoko
 from models.contrastive.moco import Moco
 from models.contrastive.swav import SwaV
 from models.contrastive.byol import BYOL
-
+from models.contrastive.simclr import SimCLR
 
 # fixed params
 train_root_dir = "./data/cifar10/train/"
@@ -50,6 +50,8 @@ def main():
         model = SwaV(backbone)
     elif args.model_name == "byol":
         model = BYOL(backbone)
+    elif args.model_name == "simclr":
+        model = SimCLR(backbone)
 
     transform = MoCoV2Transform(
         input_size=32,
