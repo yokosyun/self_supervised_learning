@@ -134,6 +134,8 @@ def main():
                 "backbone_momentum",
                 "projection_head_momentum",
             ]
+        elif args.model_name == "simclr":
+            remove_keys = ["projection_head"]
         else:
             raise Exception("Invalid model type")
         state_dict = replace_keys(ckpt["state_dict"], remove_keys=remove_keys)
