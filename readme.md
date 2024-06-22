@@ -31,8 +31,9 @@ tensorboard --logdir tb_logs/contrastive/
 # Transfer Learning
 train model
 ```
-python3 transfer_learning.py --model_name swav --ckpt_path <path-to.ckpt>
+python3 transfer_learning.py --model_name swav --ckpt_path <path-to.ckpt> (--freeze_backbone)
 ```
+
 visualize log
 ```
 tensorboard --logdir tb_logs/transfer/

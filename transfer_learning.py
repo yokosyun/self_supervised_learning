@@ -19,7 +19,6 @@ seed = 1
 max_epochs = 200
 train_root_dir = "./data/cifar10/train/"
 test_root_dir = "./data/cifar10/test/"
-freeze_backbone = False
 precision = 32
 
 CIFAR_MEAN = (0.4914, 0.4822, 0.4465)
@@ -34,6 +33,7 @@ def parse_args():
         help="[imagenet, simclr, moco, swav, byol]",
     )
     parser.add_argument("--ckpt_path", default=None, type=str)
+    parser.add_argument("--freeze_backbone", action="store_true")
     return parser.parse_args()
 
 
@@ -146,7 +146,7 @@ def main():
         state_dict = replace_keys(ckpt["state_dict"], remove_keys=remove_keys)
         backbone.load_state_dict(state_dict)
 
-    classifier = Classifier(backbone, max_epochs, freeze_backbone=freeze_backbone)
+    classifier = Classifier(backbone, max_epochs, freeze_backbone=args.freeze_backbone)
 
     trainer = pl.Trainer(
         max_epochs=max_epochs,
