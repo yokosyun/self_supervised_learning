@@ -126,7 +126,12 @@ def main():
                 "projection_head_momentum",
             ]
         elif args.model_name == "moco":
-            remove_keys = []
+            remove_keys = [
+                "projection_head",
+                "queue",
+                "key_encoder",
+                "key_projection_head",
+            ]
         elif args.model_name == "byol":
             remove_keys = [
                 "projection_head",
