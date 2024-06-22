@@ -80,7 +80,7 @@ def main():
         accelerator="gpu",
         logger=logger,
         precision=precision,
-        callbacks=[ModelCheckpoint(save_top_k=-1)],
+        callbacks=[ModelCheckpoint(save_top_k=-1, every_n_epochs=25)],
     )
     trainer.fit(model, dataloader)
 
